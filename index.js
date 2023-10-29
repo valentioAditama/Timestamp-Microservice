@@ -13,20 +13,34 @@ app.get("/api/hello", function (req, res) {
   res.json({ greeting: 'hello API' });
 });
 
+app.get('/api', function(req, res) {
+  let date = new Date();
+  let UTC = date.toUTCString();
+  let unix = date.getTime();
+  res.json({
+    unix: unix, 
+    utc: UTC
+  });
+});
+
 app.get("/api/:date", function (req, res) {
   try {
     let input = req.params.date;
 
     let timestamp;
     if (!input) {
-      // If date parameter is empty, use the current time
+      // If date parameter is empty, return the current time with a "unix" key
       timestamp = new Date().getTime();
+      res.json({
+        unix: timestamp
+      });
+      return;
     } else {
       timestamp = isNaN(input) ? new Date(input).getTime() : parseInt(input);
 
       if (isNaN(timestamp)) {
         res.status(400).json({
-          error: "Invalid Date or Timestamp"
+          error: "Invalid Date"
         });
         return;
       }
